@@ -21,7 +21,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 );
 
 $app->get('/', function() use ($app) {
-    $app['twig']->render('index.html.twig');
+    return $app['twig']->render('index.html.twig');
 });
 
 $app->get('/post/{id}', function($id) use ($app) {
