@@ -5,4 +5,12 @@
     <div>
         {{ post.content }}
     </div>
+    <br /><br /><br />
+    <ul>
+    {% for comment in comments %}
+        <li>
+            {{ comment.content }}
+        </li>
+    {% endfor %}
+    </ul>
 {% endblock %}
