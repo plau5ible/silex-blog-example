@@ -30,7 +30,14 @@ $app->get('/', function() use ($app) {
 });
 
 $app->get('/post/{id}', function($id) use ($app) {
-    return 'Пост';
+    $sql = "SELECT * FROM posts WHERE id = :id";
+    $post = $app['db']->fetchAssoc($sql, [
+        ':id' => $id,
+    ]);
+
+    return $app['twig']->render('post.html.twig', [
+        'post' => $post,
+    ]);
 });
 
 
