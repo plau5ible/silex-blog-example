@@ -1,5 +1,10 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    Главная страница
+    {% for post in posts %}
+        <h2>{{ post.title}}</h2>
+        <div>
+            {{ post.content }}
+        </div>
+    {% endfor %}
 {% endblock %}

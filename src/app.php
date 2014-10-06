@@ -21,7 +21,12 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 );
 
 $app->get('/', function() use ($app) {
-    return $app['twig']->render('index.html.twig');
+    $sql = "SELECT * FROM posts";
+    $posts = $app['db']->fetchAll($sql);
+
+    return $app['twig']->render('index.html.twig', [
+        'posts' => $posts,
+    ]);
 });
 
 $app->get('/post/{id}', function($id) use ($app) {
