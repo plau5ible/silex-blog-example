@@ -5,8 +5,23 @@ use Symfony\Component\HttpFoundation\Response;
 $app = new Silex\Application();
 $app['debug'] = true;
 
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+    'twig.path' => __DIR__.'/../views',
+));
+$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
+    'db.options' => array(
+            'driver'    => 'pdo_mysql',
+            'host'      => 'localhost',
+            'dbname'    => 'epic_blog',
+            'user'      => 'root',
+            'password'  => 'root',
+            'charset'   => 'utf8',
+        ),
+    )
+);
+
 $app->get('/', function() use ($app) {
-    return 'Главная';
+    $app['twig']->render('index.twig');
 });
 
 $app->get('/post/{id}', function($id) use ($app) {
