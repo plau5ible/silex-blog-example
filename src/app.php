@@ -6,7 +6,7 @@ $app = new Silex\Application();
 $app['debug'] = true;
 
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/../views',
+    'twig.path' => __DIR__.'/views',
 ));
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
@@ -21,7 +21,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 );
 
 $app->get('/', function() use ($app) {
-    $app['twig']->render('index.twig');
+    $app['twig']->render('index.html.twig');
 });
 
 $app->get('/post/{id}', function($id) use ($app) {
