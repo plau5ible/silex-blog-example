@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Silex\Provider\FormServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 
@@ -24,6 +25,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 $app->register(new FormServiceProvider());
 $app->register(new ValidatorServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'translator.domains' => array(),
 ));
@@ -34,7 +36,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 $app['security.firewalls'] = array(
     'admin' => array(
         'pattern' => '^/admin',
-        'http' => true,
+        'form' => array('login_path' => '/login', 'check_path' => '/admin/login_check'),
         'users' => array(
             // raw password is foo
             'admin' => array('ROLE_ADMIN', '5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg=='),
@@ -42,7 +44,19 @@ $app['security.firewalls'] = array(
     ),
 );
 
+$app->get('/login', function(Request $request) use ($app) {
+    return $app['twig']->render('login.html.twig', array(
+        'error'         => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+});
+
+
+
+
 $app->get('/', function() use ($app) {
+    var_dump($app['session']);
+    $token = $app['security']->getToken();
     $sql = "SELECT * FROM posts";
     $posts = $app['db']->fetchAll($sql);
 
