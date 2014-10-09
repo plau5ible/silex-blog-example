@@ -2,6 +2,7 @@
 
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Provider\FormServiceProvider;
+use Silex\Provider\ValidatorServiceProvider;
 
 $app = new Silex\Application();
 $app['debug'] = true;
@@ -21,7 +22,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     )
 );
 $app->register(new FormServiceProvider());
-$app->register(new Silex\Provider\ValidatorServiceProvider());
+$app->register(new ValidatorServiceProvider());
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'translator.domains' => array(),
 ));
@@ -47,7 +49,8 @@ $app->get('/', function() use ($app) {
     return $app['twig']->render('index.html.twig', [
         'posts' => $posts,
     ]);
-});
+})
+->bind('main');
 
 $app->get('/post/{id}', function($id) use ($app) {
     $sql = "
@@ -72,7 +75,8 @@ $app->get('/post/{id}', function($id) use ($app) {
         'post' => $post,
         'comments' => $comments,
     ]);
-});
+})
+->bind('post');
 
 
 $app->match('/admin/add', function() use ($app) {
@@ -99,8 +103,24 @@ $app->match('/admin/add', function() use ($app) {
         ]);
 });
 
-$app->get('/admin/edit/{id}', function($id) use ($app) {
-    return '';
+$app->match('/admin/edit/{id}', function($id) use ($app) {
+    // получить данные о посте, который меняем
+    $postData = [
+        'title' => 'POst 1',
+        'content' => 'asdfasdfasdf',
+    ];
+    // генерируем форму, подставляя данные о посте
+    $form = $app['form.factory']->createBuilder('form', $postData)
+        ->add('title')
+        ->add('content', 'textarea')
+        ->getForm();
+
+    // обработка отправленной формы
+
+    return $app['twig']->render(
+        'add.html.twig', [
+            'form' => $form->createView()
+        ]);
 });
 
 $app->get('/admin/delete/{id}/', function($id) use ($app) {

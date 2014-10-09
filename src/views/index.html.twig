@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for post in posts %}
-        <h2><a href="/post/{{ post.id }}">{{ post.title}}</a></h2>
+        <h2><a href="{{ path('post', {'id': post.id}) }}">{{ post.title}}</a></h2>
         <div>
             {{ post.content }}
         </div>
